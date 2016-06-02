@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="Scriptodoro" Language="1033" Version="0.1.0.0" Manufacturer="Matt Wanchap" UpgradeCode="aa58b335-cb99-4ae2-b37c-c702bfd4ab98">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes"/>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="Scriptodoro" />
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Scriptodoro"/>
+      </Directory>
+      <Directory Id="StartupFolder">
+
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="68de4c06-75c2-49f3-a730-7ef797246625">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Scriptodoro"
+                  Description="Scripture + The Pomodoro Technique, together at last"
+                  Target="[#Scriptodoro.exe]"
+                  WorkingDirectory="APPLICATIONROOTDIRECTORY"
+                  Icon="bible.ico" />
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Scriptodoro" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        <RegistryValue Root="HKCU" Key="Software\Scriptodoro" Name="hotkey" Type="string" Value="CapsLock" KeyPath="no" />
+      </Component>
+    </DirectoryRef>
+
+    <ComponentGroup Id="ApplicationStartupFolder">
+      <Component Id="ApplicationStartupShortcut" Directory="StartupFolder" Guid="ebaba774-9329-4073-bf93-a55ef9974621">
+        <Shortcut   Id="ApplicationStartupShortcut"
+                    Name="Scriptodoro"
+                    Description="Scripture + The Pomodoro Technique, together at last"
+                    Target="[#Scriptodoro.exe]"
+                    WorkingDirectory="APPLICATIONROOTDIRECTORY"
+                    Icon="bible.ico" />
+        <RemoveFile Id="ApplicationStartupShortcut" Name="Scriptodoro" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Scriptodoro" Name="startup" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component>
+        <File Source="$(var.Scriptodoro.TargetDir)Scriptodoro.exe" />
+      </Component>
+      <Component>
+        <File Source="$(var.Scriptodoro.TargetDir)Scriptodoro.exe.config" />
+      </Component>
+    </ComponentGroup>
+
+
+    <Feature Id="ProductFeature" Title="Scriptodoro" ConfigurableDirectory="INSTALLFOLDER">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentRef Id="ApplicationShortcut" />
+      <ComponentRef Id="ApplicationStartupShortcut" />
+    </Feature>
+
+    <Icon Id="bible.ico" SourceFile="$(var.Scriptodoro.TargetDir)bible.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="bible.ico" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Application" />
+    <Property Id="WixShellExecTarget" Value="[#Scriptodoro.exe]" />
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+    <UI>
+      <UIRef Id="WixUI_Mondo" />
+      <UIRef Id="WixUI_ErrorProgressText" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">
+        WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed
+      </Publish>
+    </UI>
+
+  </Product>
+</Wix>
