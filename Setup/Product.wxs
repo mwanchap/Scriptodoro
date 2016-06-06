@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Scriptodoro" Language="1033" Version="0.1.0.0" Manufacturer="Matt Wanchap" UpgradeCode="aa58b335-cb99-4ae2-b37c-c702bfd4ab98">
+	<Product Id="*" Name="Scriptodoro" Language="1033" Version="!(bind.FileVersion.Scriptodoro.exe)" Manufacturer="Matt Wanchap" UpgradeCode="aa58b335-cb99-4ae2-b37c-c702bfd4ab98">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -28,7 +28,8 @@
                   Icon="bible.ico" />
         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
         <RegistryValue Root="HKCU" Key="Software\Scriptodoro" Name="installed" Type="integer" Value="1" KeyPath="yes" />
-        <RegistryValue Root="HKCU" Key="Software\Scriptodoro" Name="hotkey" Type="string" Value="CapsLock" KeyPath="no" />
+        <RegistryValue Root="HKCU" Key="Software\Scriptodoro" Name="verse" Type="string" Value="Phil 4:4" KeyPath="no" />
+        <RegistryValue Root="HKCU" Key="Software\Scriptodoro" Name="interval" Type="integer" Value="25" KeyPath="no" />
       </Component>
     </DirectoryRef>
 
