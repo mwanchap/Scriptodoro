@@ -23,8 +23,8 @@ namespace Scriptodoro
         public Form1()
         {
             InitializeComponent();
-            timer1.Start();
-            timer1_Tick(null, null);
+            LoadSettings();
+            SetScripture();
         }
 
         /// <summary>
@@ -32,30 +32,26 @@ namespace Scriptodoro
         /// </summary>
         private void LoadSettings()
         {
+            string verse = "Phil 4:4";
+            int interval = 30;
+
             try
             {
                 SettingsKey = Registry.CurrentUser.OpenSubKey(RegPath, true);
-                var verseKey = SettingsKey.GetValue("verse").ToString();
-                var intervalKey = SettingsKey.GetValue("interval") as int?;
-
-                if (verseKey != null)
-                {
-                    textBox1.Text = verseKey;
-                }
-
-                if (intervalKey != null)
-                {
-
-                }
-                else
-                {
-
-                }
+                var regVerse = SettingsKey.GetValue("verse").ToString();
+                var regInterval = SettingsKey.GetValue("interval") as int?;
+                verse = regVerse ?? verse;
+                interval = regInterval ?? interval;
             }
-            catch //can't load settings - use defaults
+            catch
             {
-                textBox1.Text = "Rejoice in the LORD always, and again I will say rejoice!";
+                MessageBox.Show("Error loading settings, using defaults instead. " +
+                    "Try reinstalling the program.");
             }
+
+            textBox1.Text = verse;
+            textBox2.Text = interval.ToString();
+            timer1.Interval = interval * 60 * 1000;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -66,12 +62,7 @@ namespace Scriptodoro
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var scripture = ScriptureController.GetScripture(textBox1.Text);
-            notifyIcon1.BalloonTipText = scripture;
-            notifyIcon1.BalloonTipTitle = textBox1.Text;
-            notifyIcon1.Visible = true;
-            notifyIcon1.ShowBalloonTip(TipTime());
-            timer1.Stop(); timer1.Start();
+            SetScripture();
         }
 
         /*private void notifyIcon1_Click(object sender, EventArgs e)
@@ -87,6 +78,17 @@ namespace Scriptodoro
             var time = TimePerWord * words;
             ShowUntil = DateTime.Now.AddMilliseconds(time);
             return time + 1000;
+        }
+
+        public void SetScripture()
+        {
+            var scripture = ScriptureController.GetScripture(textBox1.Text);
+            notifyIcon1.BalloonTipText = scripture;
+            notifyIcon1.BalloonTipTitle = textBox1.Text;
+            notifyIcon1.Visible = true;
+            notifyIcon1.ShowBalloonTip(TipTime());
+            timer1.Stop();
+            timer1.Start();
         }
 
         private void notifyIcon1_BalloonTipClosed(object sender, EventArgs e)
