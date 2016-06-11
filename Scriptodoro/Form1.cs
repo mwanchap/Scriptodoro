@@ -54,15 +54,34 @@ namespace Scriptodoro
             timer1.Interval = interval * 60 * 1000;
         }
 
+        /// <summary>
+        /// Saves the settings to the registry
+        /// </summary>
+        private void SaveSettings()
+        {
+            try
+            {
+                SettingsKey.SetValue("verse", textBox1.Text, RegistryValueKind.String);
+                SettingsKey.SetValue("interval", textBox2.Text, RegistryValueKind.String);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Error saving settings:" + ex.ToString());
+            }
+        }
+
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             notifyIcon1.Visible = true;
             notifyIcon1.ShowBalloonTip(TipTime());
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void OK_Click(object sender, EventArgs e)
         {
+            SaveSettings();
             SetScripture();
+            this.Hide();
         }
 
         /*private void notifyIcon1_Click(object sender, EventArgs e)
@@ -108,6 +127,8 @@ namespace Scriptodoro
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            SaveSettings();
+
             //let the app exit if the user wasn't clicking the close button
             if (e.CloseReason != CloseReason.UserClosing)
             {
@@ -133,6 +154,12 @@ namespace Scriptodoro
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
-        } 
+        }
+
+        private void Cancel_Click(object sender, EventArgs e)
+        {
+            LoadSettings();
+            this.Hide();
+        }
     }
 }
